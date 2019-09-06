@@ -49,9 +49,17 @@ class LevelOne extends Phaser.Scene {
 			this.shipVerticalSpeed = 5;
 		} else {
 			if (this.shipVerticalSpeed < 0) {
-				this.shipVerticalSpeed += 0.2;
+				if (this.shipVerticalSpeed + 0.2 > 0) {
+					this.shipVerticalSpeed = 0;
+				} else {
+					this.shipVerticalSpeed += 0.2;
+				}
 			} else if (this.shipVerticalSpeed > 0) {
-				this.shipVerticalSpeed -= 0.2;
+				if (this.shipVerticalSpeed - 0.2 < 0) {
+					this.shipVerticalSpeed = 0;
+				} else {
+					this.shipVerticalSpeed -= 0.2;
+				}
 			}
 		}
 		if (this.keys.left.isDown) {
@@ -60,11 +68,20 @@ class LevelOne extends Phaser.Scene {
 			this.shipHorizontalSpeed = 5;
 		} else {
 			if (this.shipHorizontalSpeed < 0) {
-				this.shipHorizontalSpeed += 0.2;
+				if (this.shipHorizontalSpeed + 0.2 > 0) {
+					this.shipHorizontalSpeed = 0;
+				} else {
+					this.shipHorizontalSpeed += 0.2;
+				}
 			} else if (this.shipHorizontalSpeed > 0) {
-				this.shipHorizontalSpeed -= 0.2;
+				if (this.shipHorizontalSpeed - 0.2 < 0) {
+					this.shipHorizontalSpeed = 0;
+				} else {
+					this.shipHorizontalSpeed -= 0.2;
+				}
 			}
 		}
+		console.log(this.shipVerticalSpeed);
 		this.ship.y += this.shipVerticalSpeed;
 		this.ship.x += this.shipHorizontalSpeed;
 
