@@ -8,6 +8,7 @@ class LevelOne extends Phaser.Scene {
 		this.load.image('bg', 'assets/bg-3.png');
 		this.load.spritesheet('ship', 'assets/ship-with-thrusts.png', { frameWidth: 106, frameHeight: 77 }, 8);
 		this.load.image('fg', 'assets/foreground-2.png');
+		this.load.spritesheet('bullet', 'assets/bullet.png', { frameWidth: 13, frameHeight: 5 }, 2);
 		
 		
 		
@@ -28,18 +29,47 @@ class LevelOne extends Phaser.Scene {
 			repeat: -1
 		});
 		this.ship.play('idle');
+		//Set bullet animation	
+		this.anims.create({
+			key: 'fizz',
+			frames: this.anims.generateFrameNumbers('bullet', { frames: [0,1]}),
+			frameRate: 20,
+			repeat: -1
+		});
 		//Set depth
 		this.bg.depth = 0;
 		this.ship.depth = 1;
 		this.fg.depth = 2;
 		//Keys
 		this.keys = this.input.keyboard.createCursorKeys();
+		this.keyA = this.input.keyboard.addKey('A');
 		//Speeds
 		this.shipVerticalSpeed = 0;
 		this.shipHorizontalSpeed = 0;
+		//Set bullet position store
+		this.bulletSpawnPosition = new Phaser.Math.Vector2(0, 0);
+		//Set ship gun position
+		this.gunPosition = function() {
+			this.x = this.ship.x + this.ship.width/2;
+			this.y = this.ship.y;
+			this.bulletSpawnPosition.x = this.x;
+			this.bulletSpawnPosition.y = this.y;
+		};
+		this.keyAIsDown = false;
 	}
 
 	update() {
+		if (this.keyA.isDown && !this.keyAIsDown) {
+			this.keyAIsDown = true;
+			this.gunPosition();
+			this.bullet = this.physics.add.sprite(this.bulletSpawnPosition.x, this.bulletSpawnPosition.y, 'bullet');
+			this.bullet.play('fizz');
+			this.bullet.setScale(2);
+			this.bullet.setVelocity(500,0);
+		} else if (this.keyA.isUp) {
+			this.keyAIsDown = false;
+		}
+		// console.log(this.gunPosition());
 		this.bg.tilePositionX += 5;
 		this.fg.tilePositionX += 7;
 
@@ -81,9 +111,9 @@ class LevelOne extends Phaser.Scene {
 				}
 			}
 		}
-		console.log(this.shipVerticalSpeed);
 		this.ship.y += this.shipVerticalSpeed;
 		this.ship.x += this.shipHorizontalSpeed;
+
 
 				
 	}
