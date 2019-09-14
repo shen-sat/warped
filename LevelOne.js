@@ -46,26 +46,25 @@ class LevelOne extends Phaser.Scene {
 		//Speeds
 		this.shipVerticalSpeed = 0;
 		this.shipHorizontalSpeed = 0;
-		//Set bullet position store
-		this.bulletSpawnPosition = new Phaser.Math.Vector2(0, 0);
-		//Set ship gun position
-		this.gunPosition = function() {
-			this.x = this.ship.x + this.ship.width/2;
-			this.y = this.ship.y;
-			this.bulletSpawnPosition.x = this.x;
-			this.bulletSpawnPosition.y = this.y;
-		};
+		//Bullets setup
+		this.bulletsConfig = {
+			key: 'bullet',
+			repeat: 9,
+			active: false,
+			setScale: {
+				x: 2,
+				y: 2
+			}
+		}
+		this.bullets = this.physics.add.group(this.bulletsConfig);
+		//Other	
 		this.keyAIsDown = false;
 	}
 
 	update() {
 		if (this.keyA.isDown && !this.keyAIsDown) {
 			this.keyAIsDown = true;
-			this.gunPosition();
-			this.bullet = this.physics.add.sprite(this.bulletSpawnPosition.x, this.bulletSpawnPosition.y, 'bullet');
-			this.bullet.play('fizz');
-			this.bullet.setScale(2);
-			this.bullet.setVelocity(500,0);
+			this.fire();
 		} else if (this.keyA.isUp) {
 			this.keyAIsDown = false;
 		}
@@ -116,5 +115,14 @@ class LevelOne extends Phaser.Scene {
 
 
 				
+	}
+
+	fire() {
+		this.firstBullet = this.bullets.getFirstDead();
+		if (this.firstBullet) {
+			this.firstBullet.setPosition(this.ship.x, this.ship.y);
+			this.firstBullet.body.velocity.x = 500
+		}
+
 	}
 }
