@@ -21,7 +21,10 @@ class LevelOne extends Phaser.Scene {
 		this.fg = this.add.tileSprite(224, 224, 224 * 3, 224, 'fg');
 		this.fg.setScale(2);
 		//Set ship and its animation
-		this.ship = this.add.sprite(224, 180, 'ship');
+		this.ship = this.physics.add.sprite(224, 180, 'ship');
+		this.shipTwo = this.physics.add.sprite(400, 180, 'ship');
+		// this.ship.setCollideWorldBounds(false);
+
 		this.anims.create({
 			key: 'idle',
 			frames: this.anims.generateFrameNumbers('ship', { frames: [0,1,2,3,4,5,6,7,8]}),
@@ -54,11 +57,17 @@ class LevelOne extends Phaser.Scene {
 			setScale: {
 				x: 2,
 				y: 2
-			}
+			},
+			createCallback: this.foobar(),
+			runChildUpdate: true
+			
 		}
 		this.bullets = this.physics.add.group(this.bulletsConfig);
+
 		//Other	
 		this.keyAIsDown = false;
+		this.physics.add.overlap(this.ship, this.shipTwo, this.barfoo);
+
 	}
 
 	update() {
@@ -113,16 +122,27 @@ class LevelOne extends Phaser.Scene {
 		this.ship.y += this.shipVerticalSpeed;
 		this.ship.x += this.shipHorizontalSpeed;
 
-
-				
+		// console.log(this.firstBullet);
+		// this.ship.body.checkWorldBounds();
+		// this.ship.setCollideWorldBounds(false);
+		
+		// this.isOverlapping = this.physics.world.overlap(this.ship, this.world);
+		// console.log(this.isOverlapping);		
 	}
 
 	fire() {
 		this.firstBullet = this.bullets.getFirstDead();
 		if (this.firstBullet) {
+			this.firstBullet.active = true;
 			this.firstBullet.setPosition(this.ship.x, this.ship.y);
-			this.firstBullet.body.velocity.x = 500
+			this.firstBullet.body.velocity.x = 500;
 		}
 
+	}
+	foobar() {
+		console.log("Hello World");
+	}
+	barfoo(object, objectNext) {
+		console.log(object);
 	}
 }
