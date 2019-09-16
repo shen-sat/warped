@@ -9,9 +9,6 @@ class LevelOne extends Phaser.Scene {
 		this.load.spritesheet('ship', 'assets/ship-with-thrusts.png', { frameWidth: 106, frameHeight: 77 }, 8);
 		this.load.image('fg', 'assets/foreground-2.png');
 		this.load.spritesheet('bullet', 'assets/bullet.png', { frameWidth: 13, frameHeight: 5 }, 2);
-		
-		
-		
 	}
 
 	create() {
@@ -22,9 +19,6 @@ class LevelOne extends Phaser.Scene {
 		this.fg.setScale(2);
 		//Set ship and its animation
 		this.ship = this.physics.add.sprite(224, 180, 'ship');
-		this.shipTwo = this.physics.add.sprite(400, 180, 'ship');
-		// this.ship.setCollideWorldBounds(false);
-
 		this.anims.create({
 			key: 'idle',
 			frames: this.anims.generateFrameNumbers('ship', { frames: [0,1,2,3,4,5,6,7,8]}),
@@ -32,6 +26,22 @@ class LevelOne extends Phaser.Scene {
 			repeat: -1
 		});
 		this.ship.play('idle');
+		//Set depth of objects
+		this.bg.depth = 0;
+		this.ship.depth = 1;
+		this.fg.depth = 2;
+		//Bullets setup
+		this.bulletsConfig = {
+			key: 'bullet',
+			repeat: 9,
+			active: false,
+			visible: false,
+			setScale: {
+				x: 2,
+				y: 2
+			}
+		}
+		this.bullets = this.physics.add.group(this.bulletsConfig);
 		//Set bullet animation	
 		this.anims.create({
 			key: 'fizz',
@@ -39,45 +49,28 @@ class LevelOne extends Phaser.Scene {
 			frameRate: 20,
 			repeat: -1
 		});
-		//Set depth
-		this.bg.depth = 0;
-		this.ship.depth = 1;
-		this.fg.depth = 2;
+		//Create bullet catcher
+		this.bulletCatcher = this.physics.add.sprite(this.cameras.main.width/2, this.cameras.main.height/2, null);
+		this.bulletCatcher.setVisible(false);
+		this.bulletCatcher.displayHeight = this.cameras.main.height;
+		this.physics.add.overlap(this.bulletCatcher, this.bullets, this.catchBullet);	
 		//Keys
 		this.keys = this.input.keyboard.createCursorKeys();
 		this.keyA = this.input.keyboard.addKey('A');
+		this.keyAIsDown = false;
 		//Speeds
 		this.shipVerticalSpeed = 0;
 		this.shipHorizontalSpeed = 0;
-		//Bullets setup
-		this.bulletsConfig = {
-			key: 'bullet',
-			repeat: 9,
-			active: false,
-			setScale: {
-				x: 2,
-				y: 2
-			},
-			createCallback: this.foobar(),
-			runChildUpdate: true
-			
-		}
-		this.bullets = this.physics.add.group(this.bulletsConfig);
-
-		//Other	
-		this.keyAIsDown = false;
-		this.physics.add.overlap(this.ship, this.shipTwo, this.barfoo);
-
 	}
 
 	update() {
+		//Movement
 		if (this.keyA.isDown && !this.keyAIsDown) {
 			this.keyAIsDown = true;
 			this.fire();
 		} else if (this.keyA.isUp) {
 			this.keyAIsDown = false;
 		}
-		// console.log(this.gunPosition());
 		this.bg.tilePositionX += 5;
 		this.fg.tilePositionX += 7;
 
@@ -120,29 +113,24 @@ class LevelOne extends Phaser.Scene {
 			}
 		}
 		this.ship.y += this.shipVerticalSpeed;
-		this.ship.x += this.shipHorizontalSpeed;
-
-		// console.log(this.firstBullet);
-		// this.ship.body.checkWorldBounds();
-		// this.ship.setCollideWorldBounds(false);
-		
-		// this.isOverlapping = this.physics.world.overlap(this.ship, this.world);
-		// console.log(this.isOverlapping);		
+		this.ship.x += this.shipHorizontalSpeed;	
 	}
 
 	fire() {
-		this.firstBullet = this.bullets.getFirstDead();
-		if (this.firstBullet) {
-			this.firstBullet.active = true;
-			this.firstBullet.setPosition(this.ship.x, this.ship.y);
-			this.firstBullet.body.velocity.x = 500;
+		this.bulletFired = this.bullets.getFirstDead();
+		if (this.bulletFired) {
+			this.bulletFired.debugShowBody = false; // For screenshot purposes
+			this.bulletFired.debugShowVelocity = false; // For screenshot purposes
+			this.bulletFired.setActive(true);
+			this.bulletFired.setVisible(true);
+			this.bulletFired.setPosition(this.ship.x, this.ship.y);
+			this.bulletFired.body.velocity.x = 500;
 		}
 
 	}
-	foobar() {
-		console.log("Hello World");
-	}
-	barfoo(object, objectNext) {
-		console.log(object);
+	catchBullet(bulletCatcher, bullet) {	
+		bullet.setActive(false);
+		bullet.setVisible(false);
+
 	}
 }
