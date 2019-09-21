@@ -9,6 +9,7 @@ class LevelOne extends Phaser.Scene {
 		this.load.spritesheet('ship', 'assets/ship-with-thrusts.png', { frameWidth: 106, frameHeight: 77 }, 8);
 		this.load.image('fg', 'assets/foreground-2.png');
 		this.load.spritesheet('bullet', 'assets/bullet.png', { frameWidth: 13, frameHeight: 5 }, 2);
+		this.load.spritesheet('boss', 'assets/boss-jostle.png', { frameWidth: 165, frameHeight: 156 }, 8)
 	}
 
 	create() {
@@ -26,6 +27,22 @@ class LevelOne extends Phaser.Scene {
 			repeat: -1
 		});
 		this.ship.play('idle');
+		// //Set boss
+		this.boss = this.physics.add.sprite(500, this.cameras.main.height/2, 'boss');
+		this.boss.y = this.cameras.main.height + this.boss.height;
+		this.boss.setScale(2);
+		this.anims.create({
+			key: 'jostle',
+			frames: this.anims.generateFrameNumbers('boss', { frames: [0,1,2,3,4,5,6,7,8]}),
+			frameRate: 12,
+			repeat: -1
+		});
+		this.boss.play('jostle');	
+		this.boss.body.setSize(this.boss.width,this.boss.height/1.5,(0,0));
+		this.bossIntro = true;
+		this.bossNormalMovement = false;
+		
+		// console.log(this.boss.body.center);
 		//Set depth of objects
 		this.bg.depth = 0;
 		this.ship.depth = 1;
@@ -115,6 +132,7 @@ class LevelOne extends Phaser.Scene {
 		}
 		this.ship.y += this.shipVerticalSpeed;
 		this.ship.x += this.shipHorizontalSpeed;	
+		this.bossMovement();
 	}
 
 	fire() {
@@ -133,5 +151,17 @@ class LevelOne extends Phaser.Scene {
 		bullet.setActive(false);
 		bullet.setVisible(false);
 
+	}
+
+	bossMovement() {
+		if (this.boss.y > this.cameras.main.height/2 && this.bossIntro) {
+			this.boss.setVelocity(0, -50);
+		} else if (this.bossNormalMovement == false) {
+			this.bossIntro = false;
+			this.bossNormalMovement = true
+			this.boss.setBounce(1);
+			this.boss.setCollideWorldBounds(true);
+			this.boss.setVelocity(0, -200);
+		}		
 	}
 }
