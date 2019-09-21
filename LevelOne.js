@@ -53,7 +53,8 @@ class LevelOne extends Phaser.Scene {
 		this.bulletCatcher = this.physics.add.sprite(this.cameras.main.width/2, this.cameras.main.height/2, null);
 		this.bulletCatcher.setVisible(false);
 		this.bulletCatcher.displayHeight = this.cameras.main.height;
-		this.physics.add.overlap(this.bulletCatcher, this.bullets, this.catchBullet);	
+		this.physics.add.overlap(this.bulletCatcher, this.bullets, this.catchBullet);
+		this.bulletCatcher.x = this.cameras.main.width + this.bulletCatcher.width/2;
 		//Keys
 		this.keys = this.input.keyboard.createCursorKeys();
 		this.keyA = this.input.keyboard.addKey('A');
