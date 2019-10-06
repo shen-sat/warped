@@ -41,8 +41,7 @@ class LevelOne extends Phaser.Scene {
 		this.boss.body.setSize(this.boss.width,this.boss.height/1.5,(0,0));
 		this.bossIntro = true;
 		this.bossNormalMovement = false;
-		
-		// console.log(this.boss.body.center);
+		this.bossReadyForFirstFire = true; //Flag to kick of shoot event
 		//Set depth of objects
 		this.bg.depth = 0;
 		this.ship.depth = 1;
@@ -155,13 +154,35 @@ class LevelOne extends Phaser.Scene {
 
 	bossMovement() {
 		if (this.boss.y > this.cameras.main.height/2 && this.bossIntro) {
+			//Intro movement
 			this.boss.setVelocity(0, -100);
 		} else if (this.bossNormalMovement == false) {
+			//Bounce movement
 			this.bossIntro = false;
 			this.bossNormalMovement = true
 			this.boss.setBounce(1);
 			this.boss.setCollideWorldBounds(true);
 			this.boss.setVelocity(0, -200);
+			//Randomly stop (to fire)
+		} else if (this.bossReadyForFirstFire) {
+			this.bossReadyForFirstFire = false;
+			this.addBossShootEvent();
 		}		
 	}
+
+	addBossShootEvent() {
+		if (this.timedEvent) { this.timedEvent.destroy() } 
+		this.timedEvent = this.time.addEvent({ 
+			delay: Math.random() * 10 * 500, 
+			callback: this.bossShoot, 
+			callbackScope: this,
+			loop: true
+		});﻿﻿	
+	}
+
+	bossShoot() {
+		console.log('BZZZT!');
+		this.addBossShootEvent();
+	}
+
 }
