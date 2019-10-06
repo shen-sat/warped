@@ -155,7 +155,7 @@ class LevelOne extends Phaser.Scene {
 
 	bossMovement() {
 		if (this.boss.y > this.cameras.main.height/2 && this.bossIntro) {
-			this.boss.setVelocity(0, -50);
+			this.boss.setVelocity(0, -100);
 		} else if (this.bossNormalMovement == false) {
 			this.bossIntro = false;
 			this.bossNormalMovement = true

@@ -1,1 +1,2 @@
-TODO: Boss movement, bounce up and down screen. Get faster on button press. 
+TODO: Boss movement, bounce up and down screen.
+TODO: boss pauses randomly 
